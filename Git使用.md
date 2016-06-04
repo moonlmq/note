@@ -98,7 +98,7 @@ git log --oneline      ##用来查看每次提交的ID
 git reset --hard commit id 
 ```
 
-也可以使用`git checkout commit id`，但使用该命令会进入detached HEAD模式，详见[git book](https://git-scm.com/docs/git-checkout)。
+也可以使用`git checkout commit id`，但使用该命令会进入detached HEAD模式，只是临时的将HEAD指向某次commit，如果继续commit会产生类似分支的效果，但是如果不主动创建分支而直接切回其他分支，那么在detached HEAD模式下的更改都将会被丢弃，详见[git book](https://git-scm.com/docs/git-checkout)。
 
 或者可以把这个版本变为一个新的独立分支：
 ```
@@ -106,8 +106,8 @@ git checkout -b brach_name 085bb3bcb
 ```
 
 ### 4.提交代码到远程代码库
-
-git remote add origin git@github.com:username/project_name.git  ## 即刚刚创建的仓库的地址
 ```
+git remote add origin git@github.com:username/project_name.git  ## 即刚刚创建的仓库的地址
+
 git push -u origin master	##推送代码到远程代码库
 ```
