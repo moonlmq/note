@@ -1,0 +1,277 @@
+##################
+#java知识，解答来源于网络
+##################
+
+
+1. String类为什么是final的。
+String基本约定中最重要的一条是immutable。假如String没有声明为final, 那么你的StringChilld就有可能是被复写为mutable的，这样就打破了成为共识的基本约定。
+
+
+
+2. HashMap的源码，实现原理，底层结构。
+　HashMap是基于哈希表的Map接口的非同步实现（Hashtable跟HashMap很像，唯一的区别是Hashtalbe中的方法是线程安全的，也就是同步的）。此实现提供所有可选的映射操作，并允许使用null值和null键。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。
+　在java编程语言中，最基本的结构就是两种，一个是数组，另外一个是模拟指针（引用），所有的数据结构都可以用这两个基本结构来构造的，HashMap也不例外。HashMap实际上是一个“链表的数组”的数据结构，每个元素存放链表头结点的数组，即数组和链表的结合体。
+transient Entry[] table;
+
+static class Entry<K,V> implements Map.Entry<K,V> {
+    final K key;
+    V value;
+    Entry<K,V> next;
+    final int hash;
+    ……
+}
+
+3. 说说你知道的几个Java集合类：list、set、queue、map实现类
+HashSet是Set接口的一个子类，主要的特点是：里面不能存放重复元素，而且采用散列的存储方法，所以没有顺序。这里所说的没有顺序是指：元素插入的顺序与输出的顺序不一致。
+ArrayList是List的子类，它和HashSet想法，允许存放重复元素，因此有序。集合中元素被访问的顺序取决于集合的类型。如果对ArrayList进行访问，迭代器将从索引0开始，每迭代一次，索引值加1。然而，如果访问HashSet中的元素，每个元素将会按照某种随机的次序出现。虽然可以确定在迭代过程中能够遍历到集合中的所有元素，但却无法预知元素被访问的次序。
+LinkedList是一种可以在任何位置进行高效地插入和删除操作的有序序列。
+
+
+4. 描述一下ArrayList和LinkedList各自实现和区别
+1.ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。 
+     2.对于随机访问get和set，ArrayList觉得优于LinkedList，因为LinkedList要移动指针。 
+     3.对于新增和删除操作add和remove，LinedList比较占优势，因为ArrayList要移动数据。
+
+5. Java中的队列都有哪些，有什么区别。
+阻塞队列与普通队列的区别在于，当队列是空的时，从队列中获取元素的操作将会被阻塞，或者当队列是满时，往队列里添加元素的操作会被阻塞。试图从空的阻塞队列中获取元素的线程将会被阻塞，直到其他的线程往空的队列插入新的元素。同样，试图往已满的阻塞队列中添加新元素的线程同样也会被阻塞，直到其他的线程使队列重新变得空闲起来，如从队列中移除一个或者多个元素，或者完全清空队列.
+
+
+
+6. 反射中，Class.forName和classloader的区别
+Java中class.forName()和classLoader都可用来对类进行加载。
+class.forName()前者除了将类的.class文件加载到jvm中之外，还会对类进行解释，执行类中的static块。
+而classLoader只干一件事情，就是将.class文件加载到jvm中，不会执行static中的内容,只有在newInstance才会去执行static块。
+
+7. Java7、Java8的新特性(baidu问的,好BT)
+二进制变量的表示,支持将整数类型用二进制来表示，用0b开头。
+Switch语句支持string类型 
+Catch多个异常 说明：Catch异常类型为final； 生成Bytecode 会比多个catch小； Rethrow时保持异常类型
+
+8. Java数组和链表两种结构的操作效率，在哪些情况下(从开头开始，从结尾开始，从中间开始)，哪些操作(插入，查找，删除)的效率高
+数组：
+数组就像一个班级一样，一旦分完班，一个班多少人，每个人的学号啥的都是确定的啦，根据学号，喊一个学号就会有个人中，
+这个学号就是下标，根据下标找人就是快。单个之间关系不大
+链表：
+链表就像一个铁链，一环扣一环，不能跳过一个，直接去找下一个，必须挨个找，根据节点的next的指向，查找，要查找就得一个个查。
+数组静态分配内存，链表动态分配内存； 
+数组在内存中连续，链表不连续； 
+数组元素在栈区，链表元素在堆区； 
+数组利用下标定位，时间复杂度为O(1)，链表定位元素时间复杂度O(n)； 
+数组插入或删除元素的时间复杂度O(n)，链表的时间复杂度O(1)。 
+
+9. Java内存泄露的问题调查定位：jmap，jstack的使用等等
+    jmap用来查看堆内存使用状况，一般结合jhat使用
+jstack主要用来查看某个Java进程内的线程堆栈信息
+
+10. string、stringbuilder、stringbuffer区别
+String
+通过查看String的源码我们知道String是通过字符数组来保存一个对象的，且在这个字符数组前面加了final修饰符，说明String对象是不可变的。这就导致每次String的操作就会生成新的对象，导致效率低下且浪费空间。
+String对象不可变，可理解为它是线程安全的；
+StringBuffer 是线程安全的，而 StringBuider 是非线程安全的。从源码可以看出， StringBuffer 在方法或调用方法前面加上了Synchronized 同步锁，所以是线程安全的。
+每个字符串缓冲区都有一定的容量。只要字符串缓冲区所包含的字符序列的长度没有超出此容量（通常是16个字节），就无需分配新的内部缓冲区数组。如果内部缓冲区溢出，则此容量自动增大。从 JDK 5 开始，为StringBuffer类补充了一个单个线程使用的等价类，即StringBuilder。与该类相比，通常应该优先使用 StringBuilder 类，因为它支持所有相同的操作，但由于它不执行同步，所以速度更快。
+StringBuffer 和 StringBuilder 上的主要操作是 append 和 insert 方法，可重载这些方法，以接受任意类型的数据。每个方法都能有效地将给定的数据转换成字符串，然后将该字符串的字符追加或插入到字符串缓冲区中。append 方法始终将这些字符添加到缓冲区的末端；而insert 方法则在指定的点添加字符。
+
+11. hashtable和hashmap的区别
+1.hashMap去掉了HashTable 的contains方法，但是加上了containsValue（）和containsKey（）方法。
+2.hashTable同步的，而HashMap是非同步的，效率上逼hashTable要高。
+3.hashMap允许空键值，而hashTable不允许。
+
+13 .异常的结构，运行时异常和非运行时异常，各举个例子
+Throwable 是所有 Java 程序中错误处理的父类 ，有两种资类： Error 和 Exception 。
+Error ：表示由 JVM 所侦测到的无法预期的错误，由于这是属于 JVM 层次的严重错误 ，导致 JVM 无法继续执行，因此，这是不可捕捉到的，无法采取任何恢复的操作，顶多只能显示错误信息。
+Exception ：表示可恢复的例外，这是可捕捉到的。
+Java 提供了两类主要的异常 :runtime exception 和 checked exception 。 checked 异常也就是我们经常遇到的 IO 异常，以及 SQL 异常都是这种异常。 对于这种异常， JAVA 编译器强制要求我们必需对出现的这些异常进行 catch 。所以，面对这种异常不管我们是否愿意，只能自己去写一大堆 catch 块去处理可能的异常。
+ 但是另外一种异常： runtime exception ，也称运行时异常，我们可以不处理。当出现这样的异常时，总是由虚拟机 接管。比如：我们从来没有人去处理过 NullPointerException 异常，它就是运行时异常，并且这种异常还是最常见的异常之一。
+ 出现运行时异常后，系统会把异常一直往上层抛，一直遇到处理代码。如果没有处理块，到最上层，如果是多线程就由 Thread.run() 抛出 ，如果是单线程就被 main() 抛出 。抛出之后，如果是线程，这个线程也就退出了。如果是主程序抛出的异常，那么这整个程序也就退出了。运行时异常是 Exception 的子类，也有一般异常的特点，是可以被 Catch块处理的。只不过往往我们不对他处理罢了。也就是说，你
+ 如果不对运行时异常进行处理，那么出现运行时异常之后，要么是线程中止，要么是主程序终止。如果不想终止，则必须扑捉所有的运行时异常，决不让这个处理线程退出。队列里面出现异常数据了，正常的处理应该是把异常数据舍弃，然后记录日志。不应该由于异常数据而影响下面对正常数据的处理。 
+在这个场景这样处理可能是一个比较好的应用，但并不代表在所有的场景你都应该如此。如果在其它场景，遇到了一些错误，如果退出程序比较好，这时你就可以不太理会运行时异常 
+，或者是通过对异常的处理显式的控制程序退出。
+ 
+14. String a= “abc” String b = "abc" String c = new String("abc") String d = "ab" + "c" .他们之间用 == 比较的结果
+
+15. String 类的常用方法
+public class StringAPIDemo {  
+  
+    /**  
+     * @param args  
+     */  
+    public static void main(String[] args) {  
+        // TODO Auto-generated method stub  
+          
+        /*  
+         * public char[] toCharArray()将一个字符串变为字符数组  
+         * public byte[] getBytes() 将一个字符串变为字节数组  
+         */  
+        String strChar = "Hello";               //  定义一个字符串  
+        char cStr[] = strChar.toCharArray();    //将Hello这个字符串变为一个字符数组  
+        byte bStr[] = strChar.getBytes();       //将Hello这个字符串变为一个字节数组  
+        for(int i=0;i<cStr.length;i++){          //循环输出这个字符数组  
+            System.out.print(cStr[i]+"、");  
+        }  
+        System.out.println();  
+        for(int j=0;j<bStr.length;j++){          //循环输出这个字节数组  
+            System.out.print(bStr[j]+"、");  
+        }  
+          
+          
+        System.out.println();  
+        System.out.println("--------------------------------------------");  
+          
+        /*  
+         * public String(char[] value)将全部的字符数组变为一个字符串  
+         * public String(char[] value, int offset, int count)将指定范围内（部分）的字符数组变为字符串，offset是开始点，count是长度  
+         * public String(byte[] bytes)将全部的字节数组变为一个字符串  
+         * public String(byte[] bytes, int offset, int length)将指定范围内（部分）的字节数组变为字符串，offset是开始点，length是长度  
+         */  
+        char stringChar[] = {'I',' ','L','O','V','E',' ','Y','O','U','!'};  //定义一个字符数组  
+        byte b[] = {'1','2','3','4'};  
+        String strOne = new String (stringChar);                //将字符数组变为字符串  
+        String strTwo = new String (stringChar,2,8);                //将指定范围的字符数组变为字符串  
+        String bStrOne = new String(b);                     //将字节数组变为字符串  
+        String bStrTwo = new String(b,2,2);                 //将指定范围的字节数组变为字符串  
+        System.out.println("strOne的值是："+strOne);  
+        System.out.println("strTwo的值是："+strTwo);  
+        System.out.println("bStrOne的值是："+bStrOne);  
+        System.out.println("bStrTwo的值是："+bStrTwo);  
+        System.out.println("--------------------------------------------");  
+          
+          
+          
+          
+        /*  
+         * public char charAt(int index)从一个字符串中取出指定位置的字符。  
+         */  
+        String inStr = "charAt";  
+        char inChar = inStr.charAt(2);                  //从指定的字符串中取出指定位置的字符  
+        System.out.println("位置为2的地方的字符是："+inChar);  
+        System.out.println("--------------------------------------------");  
+          
+          
+        /*  
+         * public int length()取得字符串的长度  
+         */  
+        String strLength = "strLength";  
+        int sLength = strLength.length();                   //取得字符串的长度  
+        System.out.println("字符串strLength的长度是："+sLength);                  
+        System.out.println("--------------------------------------------");  
+  
+        /*  
+         * 查找指定的字符串是否存在  
+         * public int indexOf(String str)从头开始查找指定字符串是否存在，返回int类型，若查找不到返回-1  
+         * public int indexOf(String str,int fromIndex)从指定位置开始查找指定的字符串是否存在，返回int类型，若查找不到就返回-1  
+         */  
+          
+        String indexOfStr = "abcdefgcdhi";  
+        System.out.println(indexOfStr.indexOf("cd"));       //从头开始查找字符串“cd”返回2，也说明是查找到的第一个符合条件的位置。  
+        System.out.println(indexOfStr.indexOf("c",3));      //从第四个元素开始查找字符串“cd”  
+        System.out.println(indexOfStr.indexOf("x"));        //没有查找到，返回-1  
+        System.out.println("--------------------------------------------");  
+          
+          
+        /*  
+         * public String trim()去掉字符串中左右的空格，但中间的空格不会被去掉  
+         */  
+        String  strTrim = "   Hello Worldsd   ";  
+        System.out.println(strTrim.trim());         //去掉空格  
+        System.out.println("--------------------------------------------");  
+  
+        /*  
+         * 字符截取：从一个字符串中取出部分内容  
+         * substring(int beginIndex)从指定位置开始截取至字符串结尾  
+         * substring(int beginIndex, int endIndex)截取指定范围的字符串（开始位置和结束为止）,不包括结束位置的字符  
+         */  
+        String subStringStr = "I amLucy!!!!!";  
+        System.out.println(subStringStr.substring(2));  
+        System.out.println(subStringStr.substring(2,7));        //不包括结束位置的字符  
+        System.out.println("--------------------------------------------");  
+  
+          
+        /*  
+         * public String[] split(String regex)拆分字符串，以某一个字符串作为拆分点  
+         */  
+        String spliteStr = "Hello Lily!";  
+        String spliteS[] = spliteStr.split(" ");  
+        for(int x=0;x<spliteS.length;x++){  
+            System.out.println(spliteS[x]);  
+        }  
+        System.out.println("--------------------------------------------");  
+          
+          
+        /*  
+         * public String toLowerCase()将字符串字符都变为小写  
+         * public String toUpperCase()将字符串字符都变为大写  
+         */  
+          
+        String lowerUpper = "HelloWorld!";  
+        System.out.println(lowerUpper.toUpperCase());  
+        System.out.println(lowerUpper.toLowerCase());  
+        System.out.println("--------------------------------------------");  
+  
+          
+          
+        /*  
+         * 判断是否以指定的字符串开头或者结尾  
+         * public boolean startsWith(String prefix)判断是否以指定的字符串开头  
+         * public boolean endsWith(String suffix)  判断是否以指定的字符串结尾  
+         */  
+        String str1 = "Hello,cat";  
+        boolean s1 = str1.startsWith("He");  
+        boolean s2 = str1.endsWith("cat");  
+        System.out.println(s1+"\t"+s2);  
+        System.out.println("--------------------------------------------");  
+  
+          
+        /*  
+         * 判断两个字符串是否相等  
+         * public boolean equals(Object anObject)   区分大小写判断两个字符串是否相等  
+         * public boolean equalsIgnoreCase(String anotherString) 不区分大小写判断两个字符串是否相等  
+         */  
+        String str11 = "Hello";  
+        String str22 = "hello";  
+        System.out.println("区分大小写判断两个字符串是否相等的结果是："+str11.equals(str22));  
+        System.out.println("不区分大小写判断两个字符串是否相等的结果是："+str11.equalsIgnoreCase(str22));  
+        System.out.println("--------------------------------------------");  
+          
+          
+        /*  
+         * 字符串替换功能  
+         * public String replaceAll(String regex,String replacement)将指定字符regex替换成指定的字符replacement  
+         */  
+        String strReplace = "Hello";  
+        System.out.println("替换后的结果是："+strReplace.replaceAll("l","x"));  
+    }  
+}  
+
+
+16. Java 的引用类型有哪几种
+类class ,接口interface ,数组array 
+
+17. 抽象类和接口的区别
+接口是公开的，里面不能有私有的方法或变量，是用于让别人使用的，而抽象类是可以有私有方法或私有变量的，
+另外，实现接口的一定要实现接口里定义的所有方法，而实现抽象类可以有选择地重写需要用到的方法，一般的应用里，最顶级的是接口，然后是抽象类实现接口，最后才到具体类实现。
+还有，接口可以实现多重继承，而一个类只能继承一个超类，但可以通过继承多个接口实现多重继承，接口还有标识（里面没有任何方法，如Remote接口）和数据共享（里面的变量全是常量）的作用.
+
+18. java的基础类型和字节大小。
+Int: 4 字节
+Short: 2字节
+Long: 8字节
+Byte: 1字节
+Character: 2字节
+Float: 4字节
+Double: 8字节
+
+19. Hashtable,HashMap,ConcurrentHashMap 底层实现原理与线程安全问题（建议熟悉 jdk 源码，才能从容应答）
+（1）Hashtable是线程安全的，它的方法是同步了的，可以直接用在多线程环境中。
+（2）而HashMap则不是线程安全的。在多线程环境中，需要手动实现同步机制。
+ConcurrentHashMap提供了和Hashtable以及SynchronizedMap中所不同的锁机制。
+Hashtable中采用的锁机制是一次锁住整个hash表，从而同一时刻只能由一个线程对其进行操作；
+而ConcurrentHashMap中则是一次锁住一个桶。
+ConcurrentHashMap默认将hash表分为16个桶，诸如get,put,remove等常用操作只锁当前需要用到的桶。
+这样，原来只能一个线程进入，现在却能同时有16个写线程执行，并发性能的提升是显而易见的。
+
+20. 如果不让你用Java Jdk提供的工具，你自己实现一个Map，你怎么做。
+借鉴HashMap的原理，说了一通HashMap实现
+
+21. Hash冲突怎么办？哪些解决散列冲突的方法？
+开放地址法,拉链法
+
