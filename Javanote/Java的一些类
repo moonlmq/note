@@ -1,0 +1,31 @@
+一、BufferedReader类
+所属类库：java.lang.Object; java.io.Reader; java.io.BufferedReader
+
+基本概念：public class BufferedReader extends Reader
+	从字符输入流中读取文本，缓冲各个字符，从而实现字符、数组和行的高效读取。可以指定缓冲区的大小，或者可以使用默认的大小，通常情况默认值足够。
+	通常，Reader所做的每个读取请求都会导致对底层字符或字节流进行相应的读取请求。因此，建议用BufferedReader包装所有其read()操作可能开销很大的
+Reader（如FileReader和InputStreamReader）。
+	BufferedReader流能够读取文本行，通过向BufferedReader传递一个Reader对象，来创建一个BufferedReader对象，之所以这样做是因为FileReader没有提供
+读取文本行的功能。
+
+例：BufferedReader bufferedReader = new BufferedReader（new InputstreamReader(System.in);
+
+二、InputStreamReader类
+InputStreamReader将字节流转换为字符流。是字节流通向字符流的桥梁。如果不指定字符集编码，该解码过程将使用平台默认的字符编码。
+例：
+InputStreamReader isr = new InputStreamReader(InputStream in);
+InputStreamReader isr = new InputStreamReader(InputStream in, String charsetName)
+
+三、PrintWriter类
+所属类库：java.lang.Object; java.io.Writer; java.io.PrintWriter
+
+基本概念：public class PrinterWriter extends Writer
+	向文本输出流打印对象的格式化表示形式。此类实现在PrintStream中的所有print方法。它不包含用于写入原始字节的方法，对于这些字节，程序应该使用未
+编码的字节流进行写入。
+	与PrintWriter类不同，如果启用了自动刷新，则只有在调用println，printf或format的其中一个方法时才可能完成此操作，而不是每当正好输出换行符时才
+完成。这些方法适用平台自有的行分隔符概念，而不是换行符。
+例：
+PrintWriter(File file)
+PrintWriter(File file,String csn)
+PrintWriter(File file,boolean autoflush)
+
