@@ -1,0 +1,28 @@
+show dbs显示数据库
+use database 切换到数据库
+
+mongo中一个表称为一个集合
+插入集合操作为db.collection.insert()
+例如：db.collection.insert({x:1})
+采用show collections可以查看当前数据库中有哪些集合。
+
+查询操作为db.collection.find()
+默认查询所有数据
+
+数据中_id为全局唯一id，不能重复，可以自己手动指定。
+例如：db.collection.insert({x:1,_id:1})
+
+可以按条件查询
+如：db.collection.find({x:1})
+
+mongodb可以采用js方式插入数据
+如for(i=3;i<100;i++)db.collection.insert({x:i})
+
+可以用count()查询多少条数据
+db.collection.find().count()
+
+可以用skip()选择跳过，limit()设置查询限制，sort()实现结果排序
+如：db.collection.find().skip(3).limit(2).sort({x:1})
+
+数据库中集合更新采用db.collection.update()
+如：db.collection.update({x:1},{x:999})
