@@ -96,4 +96,43 @@ expireAfterSeconds为过期时间，单位为秒
 
 6.全文索引
 对字符串与字符串数组创建全文可搜索的索引
+mongodb中每个集合只允许创建一个全文索引
 适用情况：{author:"",titile:"",article:""}
+建立方法：
+db.article.ensureIndex({key:"text"})
+key指字段的名字，后面对应的值为固定字符串text
+db.article.ensureIndex({key_1:"text",key_2:"text"})
+db.article.ensureIndex({"$**":"text"})
+$**表示对集合中所有字段创建一个大的索引
+
+使用全文索引进行查询
+如：先插入数据
+db.collection.insert({"article":"aa bb cc dd ee"})
+db.collection.insert({"article":"aa bb rr gg"})
+db.collection.insert({"article":"aa bb cc hh"})
+
+查询方式
+使用全文索引不用指定字段的名字
+db.collection.find({$text{$search:"coffee"}})
+对于查询多个数据的采用空格分开输入，默认进行或查询
+即包含任一个即返回
+db.collection.find({$text{$search:"aa bb cc"}})
+负号表示不包含该字符串
+db.collection.find({$text{$search:"aa bb -cc"}})
+用引号将待查询字符串包含起来即为与查询，必须都包括.
+同时需要用\对引号进行转义
+db.collection.find({$text:{$search:"\"aa\" \"bb\" \" cc\""}})
+
+全文索引相似度：
+$meta操作符：{score:{$meta:"textScore"}}
+写在查询条件后面可以返回返回结果的相似度
+与sort一起使用可以达到很好的实用效果
+db.collection.find({$text:{$search:"aa bb"}},{score:{$meta:"textScore"}})
+添加排序
+db.collection.find({$text:{$search:"aa bb"}},{score:{$meta:"textScore"}}).sort({score:{$meta:"textScore"}})
+
+全文索引使用限制
+1）每次查询，只能指定一个$text查询
+2）$text查询不能出现在$nor查询中
+3)查询中如果包含了$text,hint不再起作用
+4)全文索引暂不支持中文
