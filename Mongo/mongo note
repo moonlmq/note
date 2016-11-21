@@ -1,13 +1,16 @@
+一。增查改删
 show dbs显示数据库
 use database 切换到数据库
 
 mongo中一个表称为一个集合
 插入集合操作为db.collection.insert()
 例如：db.collection.insert({x:1})
-采用show collections可以查看当前数据库中有哪些集合。
+采用show collections/tables可以查看当前数据库中有哪些集合。
 
 查询操作为db.collection.find()
 默认查询所有数据
+
+db.collection.findOne()查询一个数据
 
 数据中_id为全局唯一id，不能重复，可以自己手动指定。
 例如：db.collection.insert({x:1,_id:1})
@@ -24,5 +27,73 @@ db.collection.find().count()
 可以用skip()选择跳过，limit()设置查询限制，sort()实现结果排序
 如：db.collection.find().skip(3).limit(2).sort({x:1})
 
-数据库中集合更新采用db.collection.update()
+数据库中集合更新采用db.collection.update()，默认更新第一条找到的数据
 如：db.collection.update({x:1},{x:999})
+
+如果要修改部分字段，需要加上$set:,存在的字段则进行更新，不存在则保持。
+如：db.collection.update({x:100},{$set:{y:99}})
+
+更新一条不存在的数据自动创建用
+db.collection.update({x:100},{x:999},true),其中true代表不存在则自动创建
+
+更新多条数据采用
+db.collection.update({x:1},{$set:{x:2}},false,true)
+采用set是为了只对x进行修改，false为了不自动创建，true为多条数据更新
+
+删除，默认删除所有查到的数据
+如：db.collection.remove({x:1})
+
+对于表的删除可以直接使用drop
+如db.collection.drop()
+
+
+二。索引
+采用db.collection.getIndexes()查询索引情况
+
+采用db.collection.ensureIndex()创建索引
+如：db.collection.ensureIndex({x:1}) 
+1代表正向排序，-1为逆向排序。
+注：如果数据较多创建索引将花费较多时间，需要在使用数据库之前就创建好索引，不然会影响数据库性能。
+线上服务时对于常用的数据需要添加索引
+由于索引需要在插入数据后再次构建，所以新加索引会对写入造成一定影响，但对于查询速度来说是值得的。
+
+索引可以重复创建，会返回已存在。
+1._id索引
+默认建立的索引
+
+2.单建索引
+不会自动创建，只对一个值建立索引
+值为单一的值，例如字符串，数字或日期
+
+3.多建索引
+与单建索引创建形式相同，区别在于字段的值
+值具有多个纪录，例如数组
+如插入了{x:[1,2,3,4,5]}，原来x有索引，则创建了多建索引
+
+4.复合索引
+当我们的查询条件不只有一个时，就需要建立复合索引
+插入{x:1,y:2,z:3}数据
+若需要按照x与y的值查询
+则需要创建索引
+db.collection.ensureIndex({x:1,y:1})
+事后使用{x:1,y:1}作为查询条件就可以使用我们先前创建的索引了。
+
+5.过期索引
+在一段时间后会过期的索引
+在索引过期后相应的数据会被删除
+这适合存储一些在一段时间之后会失效的数据比如用户的登录信息、存储的日志、
+建立方法：
+db.collection.ensureIndex({time:1},{expireAfterSeconds:10})
+expireAfterSeconds为过期时间，单位为秒
+过期索引的限制
+1）存储在过期索引字段的值必须是指定的时间类型。
+说明：必须是ISODate或者ISODate数组，不能使用时间戳，否则不能被自动删除
+2）如果指定了ISODate数组，则按最小的时间进行删除
+3）过期索引不能是复合索引，因为不能有两个过期时间
+4）删除时间不是精确的。
+说明：删除过程是有后台程序每60s跑一次，而且删除也需要一些时间，所以存在误差。
+
+
+6.全文索引
+对字符串与字符串数组创建全文可搜索的索引
+适用情况：{author:"",titile:"",article:""}
